@@ -124,7 +124,7 @@ docker compose down
 
 - **Frontend Portal:** http://localhost:5173
 - **Backend API:** http://localhost:5000/api
-- **MongoDB Database:** localhost:27017
+- **MongoDB Database:** localhost:27018 (internal container port: 27017)
 
 ---
 
@@ -134,18 +134,18 @@ Production-grade Kubernetes manifests are located in the `k8s/` directory.
 
 ### Deploying to Kubernetes:
 ```bash
-# Apply ConfigMap and Secret
+# Apply all Kubernetes manifests (ConfigMap, Secret, Deployments, and Services)
+kubectl apply -f k8s/
+
+# Or apply individually:
 kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/secret.yaml
-
-# Deploy MongoDB
 kubectl apply -f k8s/mongodb-deployment.yaml
-
-# Deploy Backend API
+kubectl apply -f k8s/mongodb-service.yaml
 kubectl apply -f k8s/backend-deployment.yaml
-
-# Deploy Frontend Web Portal
+kubectl apply -f k8s/backend-service.yaml
 kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/frontend-service.yaml
 
 # Check deployment and pod status
 kubectl get deployments

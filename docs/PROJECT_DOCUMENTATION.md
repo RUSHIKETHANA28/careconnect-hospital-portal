@@ -335,12 +335,10 @@ docker compose down
 
 ## 24. Kubernetes Instructions
 ```bash
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/mongodb-deployment.yaml
-kubectl apply -f k8s/backend-deployment.yaml
-kubectl apply -f k8s/frontend-deployment.yaml
+# Apply all Kubernetes manifests (ConfigMap, Secret, Deployments, and Services)
+kubectl apply -f k8s/
 
+# Verify cluster resources
 kubectl get deployments
 kubectl get pods
 kubectl get services
