@@ -7,10 +7,6 @@ import {
   Edit2,
   Trash2,
   FileText,
-  Calendar,
-  BedDouble,
-  Clock,
-  Phone,
   Droplet,
 } from "lucide-react";
 import { apiFetch, getList } from "../utils/api";

@@ -1,0 +1,28 @@
+{
+  "name": "careconnect-hospital-portal",
+  "version": "1.0.0",
+  "description": "CareConnect – Hospital Bed Availability and Admission Management Portal (Roll Number: 2303A51919)",
+  "private": true,
+  "scripts": {
+    "test": "node backend/scripts/verify_workflow.js && node backend/scripts/verify_roles.js",
+    "test:workflow": "node backend/scripts/verify_workflow.js",
+    "test:roles": "node backend/scripts/verify_roles.js",
+    "seed": "node backend/scripts/seedUsers.js",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "start:backend": "npm --prefix backend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "keywords": [
+    "hospital-management",
+    "bed-availability",
+    "admission-portal",
+    "mern",
+    "devops",
+    "docker",
+    "kubernetes"
+  ],
+  "author": "Student Roll No: 2303A51919",
+  "license": "ISC"
+}

@@ -6,11 +6,7 @@ import {
   Download,
   Printer,
   FileText,
-  Calendar,
-  Filter,
   RefreshCw,
-  Brush,
-  Wrench,
   CheckCircle2,
 } from "lucide-react";
 import { apiFetch, getList } from "../utils/api";
@@ -95,7 +91,7 @@ function Reports() {
   const getRoomNumber = (bed) => {
     if (!bed || typeof bed !== "object") return "—";
     if (typeof bed.room === "object" && bed.room) {
-      return `Room ${bed.room.roomNumber}` || "—";
+      return `Room ${bed.room.roomNumber}`;
     }
     return "—";
   };

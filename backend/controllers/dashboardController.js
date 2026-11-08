@@ -73,6 +73,22 @@ const getDashboardStats = async (req, res) => {
     // Recent 5 admissions
     const recentAdmissions = admissions.slice(0, 5);
 
+    // Recent 5 discharges
+    const recentDischarges = admissions.filter((a) => a.status === "Discharged").slice(0, 5);
+
+    // Available beds list
+    const availableBedsList = beds
+      .filter((b) => b.status === "Available")
+      .slice(0, 6)
+      .map((b) => ({
+        _id: b._id,
+        bedNumber: b.bedNumber,
+        bedId: b.bedId,
+        roomNumber: b.room?.roomNumber,
+        wardName: b.ward?.wardName,
+        bedType: b.bedType,
+      }));
+
     res.status(200).json({
       success: true,
       stats: {
@@ -92,6 +108,8 @@ const getDashboardStats = async (req, res) => {
       bedDistribution,
       wardOccupancy,
       recentAdmissions,
+      recentDischarges,
+      availableBedsList,
     });
   } catch (error) {
     res.status(500).json({

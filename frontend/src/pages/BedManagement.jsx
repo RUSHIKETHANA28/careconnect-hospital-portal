@@ -3,7 +3,6 @@ import {
   Search,
   Plus,
   BedDouble,
-  Filter,
   CheckCircle2,
   Users,
   Brush,

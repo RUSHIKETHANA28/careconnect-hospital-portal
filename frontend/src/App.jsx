@@ -11,12 +11,10 @@ import {
   FileText,
   Settings as SettingsIcon,
   Menu,
-  Bell,
   Search,
   Activity,
   LogOut,
   Brush,
-  Wrench,
   CheckCircle2,
   UserCheck,
 } from "lucide-react";
@@ -97,8 +95,11 @@ function App() {
     ],
     wardOccupancy: [],
     recentAdmissions: [],
+    recentDischarges: [],
+    availableBedsList: [],
   });
 
+  const [dashboardTab, setDashboardTab] = useState("admissions");
   const [loadingDashboard, setLoadingDashboard] = useState(false);
 
   // Fetch live dashboard statistics from database
@@ -114,6 +115,8 @@ function App() {
           bedDistribution: data.bedDistribution || dashboardData.bedDistribution,
           wardOccupancy: data.wardOccupancy || [],
           recentAdmissions: data.recentAdmissions || [],
+          recentDischarges: data.recentDischarges || [],
+          availableBedsList: data.availableBedsList || [],
         });
       }
     } catch (err) {
@@ -432,51 +435,135 @@ function App() {
                 </div>
 
                 <div className="panel admissions-panel">
-                  <div className="panel-heading">
+                  <div className="panel-heading" style={{ flexWrap: "wrap", gap: "10px" }}>
                     <div>
-                      <h3>Recent Patient Admissions</h3>
-                      <p>Latest admission records from database</p>
+                      <h3>Hospital Inpatient Activity</h3>
+                      <p>Real-time records from MongoDB</p>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button
+                        className={`action-btn-pill ${dashboardTab === "admissions" ? "action-btn-edit" : "action-btn-view"}`}
+                        onClick={() => setDashboardTab("admissions")}
+                      >
+                        Admissions
+                      </button>
+                      <button
+                        className={`action-btn-pill ${dashboardTab === "discharges" ? "action-btn-clean" : "action-btn-view"}`}
+                        onClick={() => setDashboardTab("discharges")}
+                      >
+                        Discharges
+                      </button>
+                      <button
+                        className={`action-btn-pill ${dashboardTab === "available" ? "action-btn-edit" : "action-btn-view"}`}
+                        onClick={() => setDashboardTab("available")}
+                      >
+                        Available Beds
+                      </button>
                     </div>
                   </div>
 
-                  {dashboardData.recentAdmissions.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "50px", color: "#64748b" }}>
-                      No patient admission records found.
-                    </div>
-                  ) : (
-                    dashboardData.recentAdmissions.map((adm) => {
-                      const patientName = adm.patient?.name || "Patient";
-                      const initials = patientName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .slice(0, 2)
-                        .toUpperCase();
+                  {dashboardTab === "admissions" && (
+                    dashboardData.recentAdmissions.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "50px", color: "#64748b" }}>
+                        No patient admission records found.
+                      </div>
+                    ) : (
+                      dashboardData.recentAdmissions.map((adm) => {
+                        const patientName = adm.patient?.name || "Patient";
+                        const initials = patientName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase();
 
-                      const wardName = adm.bed?.ward?.wardName || "Ward";
-                      const bedNum = adm.bed?.bedNumber || adm.bed?.bedId || "Bed";
+                        const wardName = adm.bed?.ward?.wardName || "Ward";
+                        const bedNum = adm.bed?.bedNumber || adm.bed?.bedId || "Bed";
 
-                      return (
-                        <div className="admission-row" key={adm._id}>
-                          <div className="patient-avatar">{initials}</div>
-                          <div className="patient-info">
-                            <strong>{patientName}</strong>
-                            <small>{wardName} · Bed {bedNum}</small>
+                        return (
+                          <div className="admission-row" key={adm._id}>
+                            <div className="patient-avatar">{initials}</div>
+                            <div className="patient-info">
+                              <strong>{patientName}</strong>
+                              <small>{wardName} · Bed {bedNum}</small>
+                            </div>
+                            <span
+                              className={`badge-status ${
+                                adm.status === "Admitted"
+                                  ? "badge-occupied"
+                                  : adm.status === "Discharged"
+                                  ? "badge-discharged"
+                                  : "badge-available"
+                              }`}
+                            >
+                              {adm.status}
+                            </span>
                           </div>
-                          <span
-                            className={`badge-status ${
-                              adm.status === "Admitted"
-                                ? "badge-occupied"
-                                : adm.status === "Discharged"
-                                ? "badge-discharged"
-                                : "badge-available"
-                            }`}
-                          >
-                            {adm.status}
+                        );
+                      })
+                    )
+                  )}
+
+                  {dashboardTab === "discharges" && (
+                    dashboardData.recentDischarges.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "50px", color: "#64748b" }}>
+                        No completed discharge records found.
+                      </div>
+                    ) : (
+                      dashboardData.recentDischarges.map((dis) => {
+                        const patientName = dis.patient?.name || "Patient";
+                        const initials = patientName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase();
+
+                        const wardName = dis.bed?.ward?.wardName || "Ward";
+                        const bedNum = dis.bed?.bedNumber || dis.bed?.bedId || "Bed";
+
+                        return (
+                          <div className="admission-row" key={dis._id}>
+                            <div className="patient-avatar" style={{ background: "#f1f5f9", color: "#334155" }}>
+                              {initials}
+                            </div>
+                            <div className="patient-info">
+                              <strong>{patientName}</strong>
+                              <small>
+                                Discharged {new Date(dis.dischargeDate || dis.updatedAt).toLocaleDateString()} · {wardName} Bed {bedNum}
+                              </small>
+                            </div>
+                            <span className="badge-status badge-discharged">
+                              Discharged
+                            </span>
+                          </div>
+                        );
+                      })
+                    )
+                  )}
+
+                  {dashboardTab === "available" && (
+                    dashboardData.availableBedsList.length === 0 ? (
+                      <div style={{ textAlign: "center", padding: "50px", color: "#64748b" }}>
+                        No beds currently available. Check Cleaning status.
+                      </div>
+                    ) : (
+                      dashboardData.availableBedsList.map((bed) => (
+                        <div className="admission-row" key={bed._id}>
+                          <div className="patient-avatar" style={{ background: "#dcfce7", color: "#15803d" }}>
+                            {bed.bedNumber}
+                          </div>
+                          <div className="patient-info">
+                            <strong>Bed {bed.bedNumber}</strong>
+                            <small>{bed.wardName || "Ward"} · Room {bed.roomNumber || "—"} ({bed.bedType})</small>
+                          </div>
+                          <span className="badge-status badge-available">
+                            Ready
                           </span>
                         </div>
-                      );
-                    })
+                      ))
+                    )
                   )}
                 </div>
               </div>

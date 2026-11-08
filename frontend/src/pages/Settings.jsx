@@ -5,7 +5,6 @@ import {
   Bell,
   Lock,
   Save,
-  Hospital,
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
