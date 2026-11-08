@@ -22,6 +22,17 @@ function Patients() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const currentUser = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  })();
+  const canRegisterPatient = ["Admin", "Hospital Administrator", "Receptionist"].includes(currentUser?.role);
+  const canEditPatient = ["Admin", "Hospital Administrator", "Receptionist"].includes(currentUser?.role);
+  const canDeletePatient = ["Admin", "Hospital Administrator"].includes(currentUser?.role);
+
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -248,10 +259,12 @@ function Patients() {
             <p>Access patient demographics, medical history, and active admissions</p>
           </div>
 
-          <button className="add-patient-btn" onClick={openAddModal}>
-            <Plus size={18} />
-            <span>Register Patient</span>
-          </button>
+          {canRegisterPatient && (
+            <button className="add-patient-btn" onClick={openAddModal}>
+              <Plus size={18} />
+              <span>Register Patient</span>
+            </button>
+          )}
         </div>
 
         <div className="search-bar">
@@ -339,23 +352,27 @@ function Patients() {
                             <span>Details</span>
                           </button>
 
-                          <button
-                            className="action-btn-pill action-btn-edit"
-                            onClick={() => openEditModal(patient)}
-                            title="Edit Patient Details"
-                          >
-                            <Edit2 size={14} />
-                            <span>Edit</span>
-                          </button>
+                          {canEditPatient && (
+                            <button
+                              className="action-btn-pill action-btn-edit"
+                              onClick={() => openEditModal(patient)}
+                              title="Edit Patient Details"
+                            >
+                              <Edit2 size={14} />
+                              <span>Edit</span>
+                            </button>
+                          )}
 
-                          <button
-                            className="action-btn-pill action-btn-delete"
-                            onClick={() => deletePatient(patient._id)}
-                            title="Delete Patient"
-                          >
-                            <Trash2 size={14} />
-                            <span>Delete</span>
-                          </button>
+                          {canDeletePatient && (
+                            <button
+                              className="action-btn-pill action-btn-delete"
+                              onClick={() => deletePatient(patient._id)}
+                              title="Delete Patient"
+                            >
+                              <Trash2 size={14} />
+                              <span>Delete</span>
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

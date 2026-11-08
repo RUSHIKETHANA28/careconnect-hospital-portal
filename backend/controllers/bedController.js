@@ -1,4 +1,3 @@
-
 const Bed = require("../models/Bed");
 const Room = require("../models/Room");
 const Ward = require("../models/Ward");
@@ -33,14 +32,14 @@ const createBed = async (req, res) => {
     }
 
     const existingBed = await Bed.findOne({
-      bedNumber,
+      bedNumber: bedNumber.trim(),
       room,
     });
 
     if (existingBed) {
       return res.status(400).json({
         success: false,
-        message: "This bed already exists in the room",
+        message: `Bed ${bedNumber} already exists in room ${roomExists.roomNumber}`,
       });
     }
 
@@ -55,7 +54,7 @@ const createBed = async (req, res) => {
 
     const bed = await Bed.create({
       bedId: `BED-${Date.now()}`,
-      bedNumber,
+      bedNumber: bedNumber.trim(),
       room,
       ward,
       bedType: bedType || "General",
@@ -67,6 +66,12 @@ const createBed = async (req, res) => {
       bed,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "A bed with this number already exists in this room",
+      });
+    }
     res.status(500).json({
       success: false,
       message: error.message,
@@ -137,13 +142,13 @@ const updateBed = async (req, res) => {
     // Role check: Nurse and Receptionist can only update status
     if (["Nurse", "Receptionist"].includes(req.user.role)) {
       if (req.body.status) {
-        // Guard: Prevent overriding Occupied to Available directly if patient is admitted
-        if (currentBed.status === "Occupied" && req.body.status === "Available") {
+        // Strict Guard: Prevent modifying status of an Occupied bed while active patient is admitted
+        if (currentBed.status === "Occupied" && req.body.status !== "Occupied") {
           const activeAdm = await Admission.findOne({ bed: bedId, status: "Admitted" });
           if (activeAdm) {
             return res.status(400).json({
               success: false,
-              message: "Cannot mark bed as Available while an active admission exists. Discharge or transfer the patient first.",
+              message: "Cannot change status of an occupied bed while an active admission exists. Discharge or transfer the patient first.",
             });
           }
         }
@@ -163,12 +168,12 @@ const updateBed = async (req, res) => {
     }
 
     // For Admin / Hospital Administrator:
-    if (req.body.status === "Available" && currentBed.status === "Occupied") {
+    if (currentBed.status === "Occupied" && req.body.status && req.body.status !== "Occupied") {
       const activeAdm = await Admission.findOne({ bed: bedId, status: "Admitted" });
       if (activeAdm) {
         return res.status(400).json({
           success: false,
-          message: "Cannot mark bed as Available while an active admission exists. Discharge or transfer the patient first.",
+          message: "Cannot change status of an occupied bed while an active admission exists. Discharge or transfer the patient first.",
         });
       }
     }

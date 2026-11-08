@@ -159,11 +159,13 @@ function Reports() {
     const matchesWard = wardFilter === "All" || row.ward === wardFilter;
 
     let matchesDate = true;
-    if (fromDate && row.date) {
-      matchesDate = matchesDate && row.date >= fromDate;
-    }
-    if (toDate && row.date) {
-      matchesDate = matchesDate && row.date <= toDate;
+    if (activeReport === "Patient Admissions" || activeReport === "Discharges") {
+      if (fromDate && row.date) {
+        matchesDate = matchesDate && row.date >= fromDate;
+      }
+      if (toDate && row.date) {
+        matchesDate = matchesDate && row.date <= toDate;
+      }
     }
 
     return matchesSearch && matchesStatus && matchesWard && matchesDate;

@@ -26,6 +26,15 @@ function BedManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const currentUser = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  })();
+  const canManageBeds = ["Admin", "Hospital Administrator"].includes(currentUser?.role);
+
   const [formData, setFormData] = useState({
     bedNumber: "",
     room: "",
@@ -279,10 +288,12 @@ function BedManagement() {
               <option value="Maintenance">Maintenance</option>
             </select>
 
-            <button className="add-bed-btn" onClick={openAddModal}>
-              <Plus size={18} />
-              <span>Add Bed</span>
-            </button>
+            {canManageBeds && (
+              <button className="add-bed-btn" onClick={openAddModal}>
+                <Plus size={18} />
+                <span>Add Bed</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -394,23 +405,27 @@ function BedManagement() {
                           </button>
                         )}
 
-                        <button
-                          className="action-btn-pill action-btn-edit"
-                          onClick={() => openEditModal(bed)}
-                          title="Edit Bed"
-                        >
-                          <Edit2 size={14} />
-                          <span>Edit</span>
-                        </button>
+                        {canManageBeds && (
+                          <>
+                            <button
+                              className="action-btn-pill action-btn-edit"
+                              onClick={() => openEditModal(bed)}
+                              title="Edit Bed"
+                            >
+                              <Edit2 size={14} />
+                              <span>Edit</span>
+                            </button>
 
-                        <button
-                          className="action-btn-pill action-btn-delete"
-                          onClick={() => deleteBed(bed._id)}
-                          title="Delete Bed"
-                        >
-                          <Trash2 size={14} />
-                          <span>Delete</span>
-                        </button>
+                            <button
+                              className="action-btn-pill action-btn-delete"
+                              onClick={() => deleteBed(bed._id)}
+                              title="Delete Bed"
+                            >
+                              <Trash2 size={14} />
+                              <span>Delete</span>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

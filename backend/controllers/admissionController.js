@@ -1,4 +1,3 @@
-
 const Admission = require("../models/Admission");
 const Patient = require("../models/Patient");
 const Bed = require("../models/Bed");
@@ -25,8 +24,9 @@ const populateAdmission = (query) => {
 
 // Create a new admission
 const createAdmission = async (req, res) => {
+  let acquiredBed = null;
   try {
-    const { patient, bed, diagnosis, admittedBy } = req.body;
+    const { patient, bed, diagnosis, admittedBy, admissionDate } = req.body;
 
     if (!patient || !bed || !diagnosis) {
       return res.status(400).json({
@@ -36,7 +36,6 @@ const createAdmission = async (req, res) => {
     }
 
     const patientExists = await Patient.findById(patient);
-
     if (!patientExists) {
       return res.status(404).json({
         success: false,
@@ -44,22 +43,7 @@ const createAdmission = async (req, res) => {
       });
     }
 
-    const bedExists = await Bed.findById(bed);
-
-    if (!bedExists) {
-      return res.status(404).json({
-        success: false,
-        message: "Bed not found",
-      });
-    }
-
-    if (bedExists.status !== "Available") {
-      return res.status(400).json({
-        success: false,
-        message: "This bed is not available",
-      });
-    }
-
+    // Check if patient already has an active admission
     const existingAdmission = await Admission.findOne({
       patient,
       status: "Admitted",
@@ -72,16 +56,28 @@ const createAdmission = async (req, res) => {
       });
     }
 
+    // Atomic bed status transition from Available -> Occupied
+    acquiredBed = await Bed.findOneAndUpdate(
+      { _id: bed, status: "Available" },
+      { status: "Occupied" },
+      { new: true }
+    );
+
+    if (!acquiredBed) {
+      return res.status(400).json({
+        success: false,
+        message: "This bed is not available for admission (may be Occupied, Cleaning, or in Maintenance)",
+      });
+    }
+
     const admission = await Admission.create({
       admissionId: `ADM-${Date.now()}`,
       patient,
       bed,
-      diagnosis,
-      admittedBy: admittedBy || "",
+      diagnosis: diagnosis.trim(),
+      admittedBy: admittedBy ? admittedBy.trim() : "Staff",
+      admissionDate: admissionDate ? new Date(admissionDate) : new Date(),
     });
-
-    bedExists.status = "Occupied";
-    await bedExists.save();
 
     const populatedAdmission = await populateAdmission(
       Admission.findById(admission._id)
@@ -93,6 +89,10 @@ const createAdmission = async (req, res) => {
       admission: populatedAdmission,
     });
   } catch (error) {
+    // Rollback bed status if admission creation failed
+    if (acquiredBed) {
+      await Bed.findByIdAndUpdate(acquiredBed._id, { status: "Available" });
+    }
     res.status(500).json({
       success: false,
       message: error.message,

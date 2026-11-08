@@ -17,6 +17,7 @@ import {
   Brush,
   CheckCircle2,
   UserCheck,
+  RefreshCw,
 } from "lucide-react";
 
 import {
@@ -273,13 +274,27 @@ function App() {
               </p>
             </div>
 
-            <div className="date-label">
-              {new Date().toLocaleDateString(undefined, {
-                weekday: "long",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {activePage === "Dashboard" && (
+                <button
+                  className="action-btn-pill action-btn-clean"
+                  onClick={fetchDashboardStats}
+                  disabled={loadingDashboard}
+                  title="Refresh Live Metrics from MongoDB"
+                  style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", padding: "8px 14px", borderRadius: "8px" }}
+                >
+                  <RefreshCw size={15} style={{ animation: loadingDashboard ? "spin 1s linear infinite" : "none" }} />
+                  <span>{loadingDashboard ? "Updating..." : "Refresh Live Data"}</span>
+                </button>
+              )}
+              <div className="date-label">
+                {new Date().toLocaleDateString(undefined, {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </div>
             </div>
           </div>
 

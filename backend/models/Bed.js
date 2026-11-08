@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const bedSchema = new mongoose.Schema(
@@ -11,6 +10,7 @@ const bedSchema = new mongoose.Schema(
     bedNumber: {
       type: String,
       required: true,
+      trim: true,
     },
     room: {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,5 +35,10 @@ const bedSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Compound index to guarantee uniqueness of bedNumber within a room
+bedSchema.index({ room: 1, bedNumber: 1 }, { unique: true });
+bedSchema.index({ ward: 1 });
+bedSchema.index({ status: 1 });
 
 module.exports = mongoose.model("Bed", bedSchema);
