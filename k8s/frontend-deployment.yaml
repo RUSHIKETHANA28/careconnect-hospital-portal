@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: careconnect-frontend:latest
+          image: careconnect-frontend:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

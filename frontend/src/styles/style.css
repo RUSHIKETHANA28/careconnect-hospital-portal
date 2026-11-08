@@ -207,23 +207,54 @@ button {
 }
 
 .search-box {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
   flex: 1;
   max-width: 450px;
-  padding: 11px 14px;
+  height: 42px;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 9px;
-  color: #64748b;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.2s ease;
 }
 
 .search-box input {
   width: 100%;
+  height: 100%;
   border: none;
   outline: none;
   background: transparent;
+  padding: 0 16px 0 42px;
   font-size: 14px;
+  color: #0f172a;
+  box-sizing: border-box;
+}
+
+.search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.search-box:focus-within {
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.search-box:focus-within svg {
+  color: #2563eb;
 }
 
 .topbar-right {
@@ -2416,43 +2447,267 @@ button {
   background: #15803d;
 }
 
-.transfer-filters {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
+/* ========================================================
+   GLOBAL SEARCH BAR COMPONENT STYLING
+   Applies to Ward, Room, Bed, Patients, Admissions, Transfers
+   (Reports page excluded per instructions)
+   ======================================================== */
+.search-bar,
 .transfer-search {
-  flex: 1;
-  min-width: 0;
-  height: 43px;
-  padding: 0 13px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid #dbe3ef;
-  border-radius: 9px;
-  background: #f8fafc;
-  color: #64748b;
+  width: 100%;
+  max-width: 100%;
+  height: 42px;
+  margin: 0 0 18px 0;
+  box-sizing: border-box;
 }
 
+.search-bar svg,
+.transfer-search svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+.search-bar input,
 .transfer-search input {
   width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #172554;
+  height: 42px;
+  padding: 0 16px 0 42px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
   font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
-.transfer-filter-select {
-  min-width: 165px;
-  padding: 0 12px;
-  border: 1px solid #dbe3ef;
-  border-radius: 9px;
-  background: #f8fafc;
-  color: #172554;
+.search-bar input::placeholder,
+.transfer-search input::placeholder {
+  color: #94a3b8;
+  font-size: 14px;
+  opacity: 1;
+}
+
+.search-bar input:hover,
+.transfer-search input:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.search-bar:focus-within svg,
+.transfer-search:focus-within svg {
+  color: #2563eb;
+}
+
+.search-bar input:focus,
+.transfer-search input:focus {
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ========================================================
+   TRANSFERS & DISCHARGE FILTER ROW & SEGMENTED TABS
+   ======================================================== */
+.transfer-filters,
+.transfer-filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+  width: 100%;
+}
+
+.transfer-filter-row .search-bar,
+.transfer-filter-row .transfer-search {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.transfer-tabs {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.transfer-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
+  user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.transfer-tabs button:hover:not(.active) {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.transfer-tabs button.active {
+  background: #2563eb; /* CareConnect primary blue */
+  color: #ffffff;
+  font-weight: 600;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}
+
+@media (max-width: 640px) {
+  .transfer-tabs {
+    width: 100%;
+    display: flex;
+  }
+  .transfer-tabs button {
+    flex: 1;
+    padding: 0 8px;
+    font-size: 12.5px;
+    height: 36px;
+  }
+}
+
+/* ========================================================
+   PRIMARY ACTION TOOLBAR BUTTONS & DROPDOWNS
+   ======================================================== */
+.add-patient-btn,
+.add-bed-btn,
+.add-room-btn,
+.add-ward-btn,
+.add-admission-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+  outline: none;
+}
+
+.add-patient-btn:hover,
+.add-bed-btn:hover,
+.add-room-btn:hover,
+.add-ward-btn:hover,
+.add-admission-btn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.add-patient-btn:active,
+.add-bed-btn:active,
+.add-room-btn:active,
+.add-ward-btn:active,
+.add-admission-btn:active {
+  transform: translateY(0);
+}
+
+.patients-toolbar,
+.bed-toolbar,
+.room-toolbar,
+.ward-toolbar,
+.admissions-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.patients-toolbar h3,
+.bed-toolbar h3,
+.room-toolbar h3,
+.ward-toolbar h3,
+.admissions-toolbar h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.patients-toolbar p,
+.bed-toolbar p,
+.room-toolbar p,
+.ward-toolbar p,
+.admissions-toolbar p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.bed-toolbar select,
+.room-toolbar select,
+.ward-toolbar select,
+.admissions-toolbar select {
+  height: 40px !important;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.bed-toolbar select:focus,
+.room-toolbar select:focus,
+.ward-toolbar select:focus,
+.admissions-toolbar select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .transfer-table-wrapper {
@@ -2651,7 +2906,8 @@ button {
   }
 
   .transfer-toolbar,
-  .transfer-filters {
+  .transfer-filters,
+  .transfer-filter-row {
     align-items: stretch;
     flex-direction: column;
   }

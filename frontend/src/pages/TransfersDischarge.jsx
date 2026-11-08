@@ -307,7 +307,7 @@ function TransfersDischarge() {
         </div>
 
         <div className="transfer-filter-row">
-          <div className="transfer-search">
+          <div className="search-bar transfer-search">
             <Search size={18} />
             <input
               placeholder="Search by patient, ID, or bed..."
