@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # Database Service: MongoDB with persistent volume and healthcheck
+  mongodb:
+    image: mongo:7.0
+    container_name: careconnect-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - careconnect-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Backend Service: Express REST API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: careconnect-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/careconnect
+      - JWT_SECRET=careconnect_production_secret_key_2026
+      - NODE_ENV=production
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - careconnect-net
+
+  # Frontend Service: React Vite with Nginx Reverse Proxy
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: careconnect-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - careconnect-net
+
+volumes:
+  mongo_data:
+    name: careconnect-mongo-data
+
+networks:
+  careconnect-net:
+    name: careconnect-network
+    driver: bridge
