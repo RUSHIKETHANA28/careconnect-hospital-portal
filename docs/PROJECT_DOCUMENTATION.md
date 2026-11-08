@@ -1,5 +1,5 @@
 # CareConnect – Hospital Bed Availability and Admission Management Portal
-## Comprehensive University SRS & Technical Report
+
 **Student Roll Number:** 2303A51919  
 **Course:** DevOps & Full Stack Development  
 **Academic Year:** 2026–2027  
