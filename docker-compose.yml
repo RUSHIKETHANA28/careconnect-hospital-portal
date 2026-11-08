@@ -11,7 +11,9 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - careconnect-net
+      careconnect-net:
+        aliases:
+          - careconnect-mongodb
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -37,7 +39,9 @@ services:
       mongodb:
         condition: service_healthy
     networks:
-      - careconnect-net
+      careconnect-net:
+        aliases:
+          - careconnect-backend
 
   # Frontend Service: React Vite with Nginx Reverse Proxy
   frontend:

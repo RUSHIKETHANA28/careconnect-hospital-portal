@@ -14,6 +14,10 @@ RUN npm install
 
 COPY . .
 
+# Set relative API URL for production build so browser sends requests via Nginx proxy
+ARG VITE_API_URL=/api
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build Vite bundle into /app/dist
 RUN npm run build
 
