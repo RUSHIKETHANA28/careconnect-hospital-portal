@@ -4,9 +4,10 @@
   "description": "CareConnect – Hospital Bed Availability and Admission Management Portal (Roll Number: 2303A51919)",
   "private": true,
   "scripts": {
-    "test": "node backend/scripts/verify_workflow.js && node backend/scripts/verify_roles.js",
+    "test": "node backend/scripts/verify_workflow.js && node backend/scripts/verify_roles.js && node backend/scripts/test_all_roles.js && node backend/scripts/audit_database.js",
     "test:workflow": "node backend/scripts/verify_workflow.js",
-    "test:roles": "node backend/scripts/verify_roles.js",
+    "test:roles": "node backend/scripts/test_all_roles.js",
+    "test:audit": "node backend/scripts/audit_database.js",
     "seed": "node backend/scripts/seedUsers.js",
     "build": "npm --prefix frontend run build",
     "lint": "npm --prefix frontend run lint",

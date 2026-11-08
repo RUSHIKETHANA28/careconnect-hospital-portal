@@ -80,6 +80,8 @@ function Settings() {
     fetchMe();
   }, []);
 
+  const isAdmin = currentUser.role === "Admin" || currentUser.role === "Hospital Administrator";
+
   const handleHospitalChange = (event) => {
     setHospital({
       ...hospital,
@@ -184,6 +186,8 @@ function Settings() {
                 name="name"
                 value={hospital.name}
                 onChange={handleHospitalChange}
+                disabled={!isAdmin}
+                style={{ background: isAdmin ? "#ffffff" : "#f8fafc" }}
                 required
               />
             </label>
@@ -195,6 +199,8 @@ function Settings() {
                 name="email"
                 value={hospital.email}
                 onChange={handleHospitalChange}
+                disabled={!isAdmin}
+                style={{ background: isAdmin ? "#ffffff" : "#f8fafc" }}
                 required
               />
             </label>
@@ -205,6 +211,8 @@ function Settings() {
                 name="phone"
                 value={hospital.phone}
                 onChange={handleHospitalChange}
+                disabled={!isAdmin}
+                style={{ background: isAdmin ? "#ffffff" : "#f8fafc" }}
                 required
               />
             </label>
@@ -215,6 +223,8 @@ function Settings() {
                 name="address"
                 value={hospital.address}
                 onChange={handleHospitalChange}
+                disabled={!isAdmin}
+                style={{ background: isAdmin ? "#ffffff" : "#f8fafc" }}
                 required
               />
             </label>
@@ -330,10 +340,16 @@ function Settings() {
             </span>
           )}
 
-          <button type="submit" className="settings-save-button">
-            <Save size={17} />
-            Save Hospital Settings
-          </button>
+          {isAdmin ? (
+            <button type="submit" className="settings-save-button">
+              <Save size={17} />
+              Save Hospital Settings
+            </button>
+          ) : (
+            <span style={{ fontSize: "12.5px", color: "#64748b" }}>
+              Hospital institutional configuration can only be edited by an Administrator.
+            </span>
+          )}
         </div>
       </form>
 

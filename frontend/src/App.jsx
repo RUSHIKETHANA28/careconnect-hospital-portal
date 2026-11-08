@@ -162,10 +162,10 @@ function App() {
     const role = user.role;
     if (role === "Admin" || role === "Hospital Administrator") return true;
     if (role === "Receptionist") {
-      return ["Dashboard", "Bed Management", "Patients", "Admissions", "Transfers & Discharge", "Reports"].includes(item.name);
+      return ["Dashboard", "Bed Management", "Patients", "Admissions", "Transfers & Discharge", "Reports", "Settings"].includes(item.name);
     }
     if (role === "Nurse") {
-      return ["Dashboard", "Bed Management", "Patients", "Transfers & Discharge", "Reports"].includes(item.name);
+      return ["Dashboard", "Bed Management", "Patients", "Transfers & Discharge", "Reports", "Settings"].includes(item.name);
     }
     return true;
   });
